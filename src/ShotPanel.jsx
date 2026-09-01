@@ -8,15 +8,16 @@ function VideoFrame({ src, label }) {
     )
   }
 
-  // Embed links (YouTube/Vimeo) need an iframe; anything else is treated as a file.
-  const isEmbed = /youtube\.com\/embed|player\.vimeo\.com/.test(src)
+  // Embed links (Vimeo/YouTube) need an iframe; anything else is treated as a file.
+  const isEmbed = /player\.vimeo\.com|youtube\.com\/embed/.test(src)
 
   return isEmbed ? (
     <iframe
       className="video"
       src={src}
       title={`Demo video — ${label}`}
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+      allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+      referrerPolicy="strict-origin-when-cross-origin"
       allowFullScreen
     />
   ) : (
