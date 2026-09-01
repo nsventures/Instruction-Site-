@@ -12,12 +12,19 @@ const fmt = (s) => {
 const embed = (id) =>
   `https://player.vimeo.com/video/${id}?controls=0&title=0&byline=0&portrait=0&badge=0&dnt=1&autopause=0&app_id=58479`
 
+// Vimeo shows a "More from ..." end screen of suggested videos when a clip
+// finishes, and there is no player param to disable it on a free account.
+// Stopping fractionally early means the player never reaches `ended`, so the
+// end screen never gets a chance to appear.
+const END_GUARD_SECONDS = 0.4
+
 export default function VideoPlayer({ videoId, label }) {
   // React owns the iframe; the SDK only wraps it. Letting the SDK create and
   // destroy the element instead leaves a dead player behind StrictMode's
   // double-mount, and every control silently no-ops.
   const iframeRef = useRef(null)
   const playerRef = useRef(null)
+  const stoppingRef = useRef(false)
   const [playing, setPlaying] = useState(false)
   const [muted, setMuted] = useState(false)
   const [time, setTime] = useState(0)
@@ -28,10 +35,30 @@ export default function VideoPlayer({ videoId, label }) {
     const player = new Player(iframeRef.current)
     playerRef.current = player
 
-    const onPlay = () => setPlaying(true)
+    const onPlay = () => { stoppingRef.current = false; setPlaying(true) }
     const onPause = () => setPlaying(false)
-    const onEnd = () => { setPlaying(false); setTime(0) }
-    const onTime = ({ seconds }) => setTime(seconds)
+
+    // Backstop: if a clip ever does reach the end (a seek to the very end, or
+    // a timeupdate gap), rewind immediately so the end screen cannot linger.
+    const onEnd = () => {
+      setPlaying(false)
+      setTime(0)
+      player.setCurrentTime(0).catch(() => {})
+    }
+
+    const onTime = ({ seconds, duration: total }) => {
+      setTime(seconds)
+      if (!total || stoppingRef.current) return
+      if (seconds >= total - END_GUARD_SECONDS) {
+        // Rewind to the start rather than holding the last frame, so the panel
+        // returns to our own play affordance.
+        stoppingRef.current = true
+        player.pause()
+          .then(() => player.setCurrentTime(0))
+          .then(() => { setPlaying(false); setTime(0) })
+          .catch(() => {})
+      }
+    }
 
     player.on('play', onPlay)
     player.on('pause', onPause)
