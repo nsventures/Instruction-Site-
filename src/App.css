@@ -186,6 +186,9 @@ body {
 }
 
 .player__bar {
+  /* Media controls stay LTR even in RTL locales: a timeline always runs
+     left-to-right, and a mirrored scrubber reads as broken. */
+  direction: ltr;
   position: absolute;
   left: 0;
   right: 0;
@@ -364,4 +367,134 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
+}
+
+/* ---------- Language switcher ---------- */
+.header { position: relative; }
+
+.lang {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.lang__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font: inherit;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.lang__btn:hover { border-color: var(--accent-bright); background: rgba(255, 255, 255, 0.12); }
+
+.lang__globe {
+  width: 15px; height: 15px;
+  border: 1.6px solid currentColor;
+  border-radius: 50%;
+  position: relative;
+  flex: 0 0 auto;
+}
+.lang__globe::before,
+.lang__globe::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1.6px solid currentColor;
+  border-radius: 50%;
+}
+.lang__globe::before { transform: scaleX(0.45); }
+.lang__globe::after { border-width: 1.6px 0 0 0; border-radius: 0; top: 50%; }
+
+.lang__caret {
+  width: 0; height: 0;
+  border: solid transparent;
+  border-width: 4.5px 4px 0 4px;
+  border-top-color: currentColor;
+  flex: 0 0 auto;
+}
+
+.lang__spinner {
+  width: 12px; height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: lang-spin 0.7s linear infinite;
+  flex: 0 0 auto;
+}
+
+@keyframes lang-spin { to { transform: rotate(360deg); } }
+
+.lang__menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 30;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  width: max-content;
+  min-width: 190px;
+  max-height: min(56vh, 380px);
+  overflow-y: auto;
+  background: var(--navy-lift);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+[dir='rtl'] .lang__menu { right: auto; left: 0; }
+
+.lang__opt {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: start;
+  cursor: pointer;
+}
+
+.lang__opt:hover { background: rgba(255, 255, 255, 0.12); }
+.lang__opt--active { background: var(--accent); }
+
+.lang__native { font-weight: 600; }
+.lang__latin { font-size: 0.78rem; color: var(--text-dim); }
+.lang__opt--active .lang__latin { color: rgba(255, 255, 255, 0.85); }
+
+.header__notice {
+  margin: 0 0 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #ffd9a8;
+}
+
+/* Copy fades while a translation is in flight, so the swap isn't jarring. */
+.app--busy .header__title,
+.app--busy .tabs,
+.app--busy .subtabs,
+.app--busy .panel__copy {
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+@media (max-width: 560px) {
+  .lang { justify-content: center; }
+  .lang__menu { right: 50%; transform: translateX(50%); }
+  [dir='rtl'] .lang__menu { left: 50%; right: auto; transform: translateX(-50%); }
 }
