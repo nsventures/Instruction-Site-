@@ -1,122 +1,63 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { sections, title } from './data'
+import ShotPanel from './ShotPanel'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [sectionId, setSectionId] = useState(sections[0].id)
+  const section = sections.find((s) => s.id === sectionId)
+
+  // Sub-tab selection is tracked per section so switching away and back
+  // returns you to the shot you were last looking at.
+  const [shotIds, setShotIds] = useState({})
+  const shots = section.shots
+  const shotId = shots ? (shotIds[section.id] ?? shots[0].id) : null
+  const shot = shots ? shots.find((s) => s.id === shotId) : null
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app">
+      <header className="header">
+        <h1 className="header__title">{title}</h1>
+      </header>
 
-      <div className="ticks"></div>
+      <nav className="tabs" role="tablist" aria-label="Shoot sections">
+        {sections.map((s) => (
+          <button
+            key={s.id}
+            role="tab"
+            id={`tab-${s.id}`}
+            aria-selected={s.id === sectionId}
+            aria-controls={`panel-${s.id}`}
+            className={`tab${s.id === sectionId ? ' tab--active' : ''}`}
+            onClick={() => setSectionId(s.id)}
+          >
+            {s.label}
+          </button>
+        ))}
+      </nav>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
+      <main className="content" role="tabpanel" id={`panel-${section.id}`} aria-labelledby={`tab-${section.id}`}>
+        {shots ? (
+          <>
+            <nav className="subtabs" role="tablist" aria-label={`${section.label} shots`}>
+              {shots.map((s) => (
+                <button
+                  key={s.id}
+                  role="tab"
+                  aria-selected={s.id === shotId}
+                  className={`subtab${s.id === shotId ? ' subtab--active' : ''}`}
+                  onClick={() => setShotIds((prev) => ({ ...prev, [section.id]: s.id }))}
                 >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+                  {s.label}
+                </button>
+              ))}
+            </nav>
+            <ShotPanel {...shot} />
+          </>
+        ) : (
+          <ShotPanel {...section} />
+        )}
+      </main>
+    </div>
   )
 }
-
-export default App
