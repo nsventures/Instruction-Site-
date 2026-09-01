@@ -1,13 +1,9 @@
 // Content extracted from "Drone shoot Demo video.pdf", with Vimeo demo videos.
 //
-// `video` holds a Vimeo player embed URL. The player params match the embed
-// code supplied by Vimeo: chrome (title/byline/portrait/badge) is hidden so the
-// clip sits cleanly in the panel, and autopause is off.
+// `videoId` is the bare Vimeo id. The player is constructed by the Vimeo SDK in
+// VideoPlayer.jsx with Vimeo's own controls disabled, so no Vimeo branding is
+// rendered; the controls you see are ours.
 
-const PLAYER_PARAMS =
-  'title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479'
-
-const vimeo = (id) => `https://player.vimeo.com/video/${id}?${PLAYER_PARAMS}`
 
 export const title = 'CONNECTIVITY VIDEO DRONE SHOOT'
 
@@ -22,7 +18,7 @@ export const sections = [
       'through the centre of frame. Hold a constant speed so the surrounding ' +
       'context reads clearly, and let the destination reveal itself at the ' +
       'end of the move rather than cutting to it.',
-    video: vimeo('1222994580'),
+    videoId: '1222994580',
   },
   {
     id: 'turning-point',
@@ -33,7 +29,7 @@ export const sections = [
       'holding the intersection at the centre of frame. Keep the yaw slow ' +
       'and even so the change of direction reads as one deliberate movement, ' +
       'and carry enough of the surrounding roads to make the turn legible.',
-    video: vimeo('1222994537'),
+    videoId: '1222994537',
   },
   {
     id: 'site-shots',
@@ -49,7 +45,7 @@ export const sections = [
           'close the gap gradually while keeping the main structure centred. ' +
           'Maintain stable forward motion throughout — the shot should feel ' +
           'like a calm arrival, not a rush.',
-        video: vimeo('1222994536'),
+        videoId: '1222994536',
       },
       {
         id: 'project-entrance',
@@ -60,7 +56,7 @@ export const sections = [
           'gateway structure in clear view long enough to be read. Keep the ' +
           'horizon level and the movement gentle so the branding and entry ' +
           'detail stay sharp.',
-        video: vimeo('1222994538'),
+        videoId: '1222994538',
       },
       {
         id: 'top-angle-zoom-in',
@@ -70,7 +66,7 @@ export const sections = [
           'descend steadily toward a single focal point. Keep the camera ' +
           'pointed straight down and the descent even, so layout and massing ' +
           'resolve into detail without any drift or correction mid-move.',
-        video: vimeo('1222994533'),
+        videoId: '1222994533',
       },
       {
         id: 'top-angle-zoom-out',
@@ -80,7 +76,7 @@ export const sections = [
           'overhead, then rise smoothly to expose the wider site and its ' +
           'context. Hold the same centre point throughout the climb so the ' +
           'surrounding development opens outward symmetrically.',
-        video: vimeo('1222992694'),
+        videoId: '1222992694',
       },
       {
         id: 'top-angle-orbital',
@@ -91,7 +87,7 @@ export const sections = [
           'the radius consistent, letting the change in height do the work. ' +
           'The combined move should feel like a single sweep, with no visible ' +
           'hesitation where the orbit and the climb meet.',
-        video: vimeo('1222992692'),
+        videoId: '1222992692',
       },
       {
         id: 'site-revolving',
@@ -102,7 +98,7 @@ export const sections = [
           'revolution, keeping speed and distance constant so every elevation ' +
           'gets equal screen time and the light shifts naturally across the ' +
           'faces as you come around.',
-        video: vimeo('1222992693'),
+        videoId: '1222992693',
       },
       {
         id: 'pull-back',
@@ -113,7 +109,7 @@ export const sections = [
           'to reveal the full development and the landscape beyond it. Keep ' +
           'the subject anchored in frame as it recedes — this is the closing ' +
           'shot, so let it breathe and hold the final wide.',
-        video: vimeo('1222994584'),
+        videoId: '1222994584',
       },
     ],
   },
